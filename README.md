@@ -1,4 +1,4 @@
-# Springboot-microservices-project
+# springboot-microservices-project
 **Spring Boot Microservices Level 1 - Communication and discovery**
 ***This introduces you to building microservices with Spring Boot and Spring cloud. 
 This is Level 1 - start here if you are completely new to building microservices in Spring.***
