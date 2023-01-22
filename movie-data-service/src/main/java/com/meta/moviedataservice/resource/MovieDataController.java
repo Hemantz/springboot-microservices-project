@@ -23,7 +23,7 @@ public class MovieDataController {
         List<Rating> ratings = new ArrayList<>();
         ratings.add(new Rating("1234",4));
         ratings.add(new Rating("3456",3));
-        UserRating userRating = new UserRating(ratings);
+        UserRating userRating = new UserRating(ratings,userId);
         return userRating;
     }
 }

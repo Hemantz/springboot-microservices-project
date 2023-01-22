@@ -4,6 +4,9 @@ import com.meta.moviecataglogservice.model.CatalogItem;
 import com.meta.moviecataglogservice.model.Movie;
 import com.meta.moviecataglogservice.model.Rating;
 import com.meta.moviecataglogservice.model.UserRating;
+import com.meta.moviecataglogservice.service.CatalogItemService;
+import com.meta.moviecataglogservice.service.UserRatingService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,25 +29,34 @@ public class MovieCatalogContoller {
     RestTemplate restTemplate;
     @Autowired
     WebClient.Builder webClient;
+    @Autowired
+    CatalogItemService catalogItemService;
+    @Autowired
+    UserRatingService userRatingService;
+
+
     @RequestMapping("/{userId}")
     public List<CatalogItem>  getCatalog(@PathVariable("userId") String userId){
 
         List<CatalogItem> catalogItems;
         //get all related movie IDs
-        UserRating userRating = restTemplate.getForObject("http://movie-data-service/ratings-data/user/"+userId, UserRating.class);
+        UserRating userRating = userRatingService.getUserRating(userId);
         // For each Movies Ids , call the movie info service and movie data service
-        catalogItems = userRating.getUserRating().stream().map(rating ->{
-           Movie movie = restTemplate.getForObject("http://movie-info-service/movie/"+rating.getMovieId(), Movie.class);
-            return new CatalogItem(movie.getName(),movie.getDescription(), rating.getRating());
-        }).collect(Collectors.toList());
+        catalogItems = userRating.getUserRating().stream().map(
+                rating -> catalogItemService.getCatalogItem(rating)
+                ).collect(Collectors.toList());
 
         //put them all together
         return catalogItems;
     }
+
+
+
+
     //Webclient builder which is async
           /*  webClient.build()
                     .get()
-                    .uri("http://localhost:8082/ratings-data/\"+userId")
+                    .uri("http://localhost:8082/ratings-data/"+userId")
                     .retrieve()
                     .bodyToMono(Rating.class)
                     .block();*/
