@@ -4,6 +4,7 @@ import com.meta.moviecataglogservice.model.CatalogItem;
 import com.meta.moviecataglogservice.model.Movie;
 import com.meta.moviecataglogservice.model.Rating;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,14 @@ public class CatalogItemService {
 
     @Autowired
     RestTemplate restTemplate;
-    @HystrixCommand(fallbackMethod = "getFallbackCatalogItem")
+    @HystrixCommand(
+            fallbackMethod = "getFallbackCatalogItem",
+            threadPoolKey = "movieInfoService",
+            threadPoolProperties ={
+                    @HystrixProperty(name = "coreSize", value = "20"),
+                    @HystrixProperty(name = "maxQueueSize", value = "10")
+            }
+    )
     public CatalogItem getCatalogItem(Rating rating) {
         Movie movie = restTemplate.getForObject("http://movie-info-service/movie/"+ rating.getMovieId(), Movie.class);
         return new CatalogItem(movie.getName(), movie.getDescription(), rating.getRating());
@@ -26,5 +34,4 @@ public class CatalogItemService {
     private CatalogItem getFallbackCatalogItem(Rating rating){
         return new CatalogItem("Not found","No movie found",rating.getRating());
     }
-
 }
