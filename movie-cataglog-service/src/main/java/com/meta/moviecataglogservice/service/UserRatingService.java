@@ -5,6 +5,7 @@ import com.meta.moviecataglogservice.model.UserRating;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
@@ -17,6 +18,8 @@ public class UserRatingService {
 
     @Autowired
     RestTemplate restTemplate;
+    @Value("${movie.userRatingLink}")
+    String userRatingLink;
     @HystrixCommand(
             fallbackMethod = "getFallbackUserRating",
             threadPoolKey = "movieDataService",
@@ -26,7 +29,7 @@ public class UserRatingService {
             }
     )
     public UserRating getUserRating(String userId) {
-        return restTemplate.getForObject("http://movie-data-service/ratings-data/user/" + userId, UserRating.class);
+        return restTemplate.getForObject(userRatingLink + userId, UserRating.class);
     }
 
     public UserRating getFallbackUserRating(String userId) {

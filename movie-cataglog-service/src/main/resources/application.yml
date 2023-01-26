@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: movie-catalog-service
+server:
+    port: 8081
+movie:
+  movieInfo: "http://movie-info-service/movie/"
+  userRatingLink: "http://movie-data-service/ratings-data/user/"
