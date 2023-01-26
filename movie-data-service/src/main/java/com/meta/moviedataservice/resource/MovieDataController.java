@@ -21,8 +21,8 @@ public class MovieDataController {
     @RequestMapping("/user/{userId}")
     public UserRating getUserRating(@PathVariable("userId") String userId){
         List<Rating> ratings = new ArrayList<>();
-        ratings.add(new Rating("1234",4));
-        ratings.add(new Rating("3456",3));
+        ratings.add(new Rating("100",4));
+        ratings.add(new Rating("200",3));
         UserRating userRating = new UserRating(ratings,userId);
         return userRating;
     }
