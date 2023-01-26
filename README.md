@@ -12,4 +12,4 @@ Now we have to build microservices in Spring Boot that are resilient and fault-t
 **Spring Boot Microservices Level 2**
 **Now to understand the problems with Hystrix proxy and how it affects certain use-cases of dealing with Hystrix and calling methods of the same class annotated with HystrixCommand is that it will work if the Hystrix is directly annotated on the method which is calling the external microservices otherwise it will not work. 
 If Method is calling another method with Hystrix then it will not work**
-![](images/Proxy class.png)
+![](images/ProxyClass.png)
